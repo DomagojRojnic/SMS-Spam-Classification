@@ -20,10 +20,10 @@ with nlp.disable_pipes():
 from sklearn.model_selection import train_test_split
 
 X_train, X_test, y_train, y_test = train_test_split(doc_vectors, spam.Category,
-                                                    stratify=spam.Category, test_size=0.6, random_state=1)
+                                                    stratify=spam.Category, test_size=0.8, random_state=388)
 
 from sklearn.svm import LinearSVC
 
-svc = LinearSVC(random_state=1, dual=False, max_iter=10000)
+svc = LinearSVC(random_state=388, dual=False, max_iter=10000)
 svc.fit(X_train, y_train)
 print(f"Accuracy: {svc.score(X_test, y_test) * 100:.3f}%", )
