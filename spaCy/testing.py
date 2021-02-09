@@ -38,35 +38,49 @@ y_train.reset_index(drop=True,inplace=True)
 
 # svc = LinearSVC(random_state=388, dual=False, max_iter=10000).fit(X_train,y_train)
 
+#'hidden_layer_sizes': (50, 100, 50), 'activation': 'relu', 'solver': 'adam', 'alpha': 0.0001, 'learning_rate': 'adaptive'
+
 # logreg = LogisticRegression().fit(X_train,y_train)
 
 # rfc = RandomForestClassifier().fit(X_train,y_train)
 
 # models=[svc,logreg,rfc]
 
-mlp = MLPClassifier(max_iter=100).fit(X_train,y_train)
+mlp = LinearSVC().fit(X_train,y_train)
 
-parameter_space = {
-    'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)],
-    'activation': ['tanh', 'relu'],
-    'solver': ['sgd', 'adam'],
-    'alpha': [0.0001, 0.05],
-    'learning_rate': ['constant','adaptive'],
-}
+print("Starting grid search")
 
+# parameter_space = {
+#     'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)],
+#     'activation': ['tanh', 'relu'],
+#     'solver': ['sgd', 'adam'],
+#     'alpha': [0.0001, 0.05],
+#     'learning_rate': ['constant','adaptive'],
+# }
+
+# parameter_space = {'bootstrap': [True, False],
+#  'max_depth': [10, 30, 50, 70, 90, None],
+#  'min_samples_leaf': [1, 2, 4],
+#  'min_samples_split': [2, 5, 10],
+#  'n_estimators': [200, 600, 1000, 1400, 1800]}
+
+parameter_space = {'C':[1,10,100,1000],'gamma':[1,0.1,0.001,0.0001], 'kernel':['linear','rbf']}
 from sklearn.model_selection import GridSearchCV
+from tune_sklearn import TuneGridSearchCV
 
-clf = GridSearchCV(mlp, parameter_space, n_jobs=-1, cv=3)
+clf = TuneGridSearchCV(mlp, parameter_space, n_jobs=-1, cv=3)
 clf.fit(X_train, y_train)
 
-# Best paramete set
-print('Best parameters found:\n', clf.best_params_)
+
 
 # All results
 means = clf.cv_results_['mean_test_score']
 stds = clf.cv_results_['std_test_score']
 for mean, std, params in zip(means, stds, clf.cv_results_['params']):
     print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+    
+# Best paramete set
+print('Best parameters found:\n', clf.best_params_)
 
 model=clf
 print(f"------------Model: {model}------------")
