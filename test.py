@@ -12,7 +12,8 @@ data =  {
                 "input1":
                 {
                     "ColumnNames": ["Col1", "Col2"],
-                    "Values": [ [ "value", "value" ], [ "value", "value" ], ]
+                    "Values": [ [ "Message","Hey, see you tomorrow?" ], 
+                               [ "Message","URGENT! You have won a 1 week FREE membership in our £100,000 Prize Jackpot! Txt the word: CLAIM to No: 81010 T&C www.dbuk.net LCCLTD POBOX 4403LDNW1A7RW18"], ]
                 },        },
             "GlobalParameters": {
 }
@@ -28,11 +29,21 @@ req = urllib.request.Request(url, body, headers)
 
 try:
     response = urllib.request.urlopen(req)
-    response = urllib.request.urlopen(req)
-    result = response.read()
-    print(result) 
+    html_response = response.read()
+    encoding = response.headers.get_content_charset('utf-8')
+    decoded_html = html_response.decode(encoding)
+    occurances = [i for i in range(len(decoded_html)) if decoded_html.startswith('0.', i)]
+    i=0
+    for occurance in occurances:
+        i+=1 
+        print(f"Probability {i}. message is spam: {decoded_html[occurance:occurance+15]}%")
+
 
 except urllib.error.HTTPError as error:
     print("The request failed with status code: " + str(error.code))
     print(error.info())
     print(json.loads(error.read()))                 
+    
+    
+    
+    

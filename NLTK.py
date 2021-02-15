@@ -133,6 +133,8 @@ classifiers = [
 models = list(zip(names, classifiers))
 
 nltk_ensemble = SklearnClassifier(VotingClassifier(estimators = models, voting = 'hard', n_jobs = -1))
+
+
 nltk_ensemble.train(training)
 accuracy = nltk.classify.accuracy(nltk_model, testing)*100
 print("Voting Classifier: Accuracy: {}".format(accuracy))
@@ -149,5 +151,13 @@ pd.DataFrame(
     confusion_matrix(labels, prediction),
     index = [['actual', 'actual'], ['ham', 'spam']],
     columns = [['predicted', 'predicted'], ['ham', 'spam']])
+
+
+import joblib
+
+filename="ensemble_model.sav"
+joblib.dump(nltk_ensemble, filename)
+
+
 
 
