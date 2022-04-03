@@ -16,10 +16,10 @@ def find_features(message, word_features):
         features[word] = (word in words)
     return features
 
-#ucitavanje podataka
+#import data
 df = pd.read_table('SMSSpamCollection', header = None, encoding = 'utf-8')
 
-#broj uzoraka pojedine klase
+#samples per class
 classes = df[0]
 
 #preprocessing
@@ -38,18 +38,18 @@ processed = processed.str.replace(r'£|\$', 'moneysymb')
 processed = processed.str.replace(r'^\(?[\d]{3}\)?[\s-]?[\d]{3}[\s-]?[\d]{4}$', 'phonenumbr')
 processed = processed.str.replace(r'\d+(\.\d+)?', 'numbr')
 
-# uklanjanje punktacija
+# remove punctuations
 processed = processed.str.replace(r'[^\w\d\s]', ' ')
 
-# vise razmaka izmedju rijeci u jedan razmak
+# combine multiple spaces to single
 processed = processed.str.replace(r'\s+', ' ')
 
-# uklanjanje razmaka na pocetku i kraju poruke
+# remove spaces before and after the word
 processed = processed.str.replace(r'^\s+|\s+?$', '')
 
 processed = processed.str.lower()
 
-#uklanjanje stop rijeci - rijeci koje ne mijenjaju znacenje recenice
+# remove stop-words
 stop_words = set(stopwords.words('english'))
 processed = processed.apply(lambda x: ' '.join(term for term in x.split() if term not in stop_words))
 
@@ -73,7 +73,7 @@ seed = 1
 np.random.seed = seed
 np.random.shuffle(messages)
 
-# find_features za svaki SMS
+# find_features for each SMS
 feature_sets = [(find_features(text, word_features), label) for (text, label) in messages]
 
 
@@ -157,7 +157,3 @@ import joblib
 
 filename="ensemble_model.sav"
 joblib.dump(nltk_ensemble, filename)
-
-
-
-
